@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload Audio for Transcription</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar Styling */
+    .navbar .nav-link {
+      margin: 0 10px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .navbar .nav-link:hover {
+      color: #a9c9d6 !important;
+      transform: scale(1.05);
+    }
+
+    /* Page Content */
+    .container {
+      margin-top: 3rem;
+      text-align: center;
+    }
+    h1 {
+      color: #003366;
+      font-weight: bold;
+      margin-bottom: 2rem;
+    }
+    form {
+      display: inline-block;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      margin: 0.5rem;
+    }
+    #transcribeBtn {
+      background-color: #4CAF50;
+    }
+    #transcribeBtn:hover {
+      background-color: #45a049;
+    }
+    #actionBtn {
+      background-color: #0056d6;
+    }
+    #actionBtn:hover {
+      background-color: #0041a8;
+    }
+    #summaryBtn {
+      background-color: #ff9800;
+    }
+    #summaryBtn:hover {
+      background-color: #e68900;
+    }
+    #transcript {
+      white-space: pre-wrap;
+      background: #f4f4f4;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      max-width: 700px;
+      margin: 2rem auto;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ Navigation Bar -->
+  <nav class="navbar navbar-expand-lg" style="background-color: #003366;">
+    <div class="container">
+      <a class="navbar-brand text-white fw-bold" href="index.html">Auto Clone AI</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon bg-light"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link text-white" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="auto-join.html">Auto Join</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="upload.html">Upload</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="history.html">History</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="login.html">Login</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="signup.html">Sign Up</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ✅ Main Content -->
+  <div class="container">
+    <h1>Upload Audio for Transcription</h1>
+
+    <form id="uploadForm">
+      <input type="file" name="audio" accept="audio/*" required class="form-control mb-3">
+      <div>
+        <button id="transcribeBtn" type="submit">Transcribe</button>
+        <button id="actionBtn" type="button" onclick="showActionItems()">Action Tracking</button>
+        <button id="summaryBtn" type="button" onclick="showSummary()">Smart Summary</button>
+      </div>
+    </form>
+
+    <h2 class="mt-4 text-primary">Transcript:</h2>
+    <pre id="transcript"></pre>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const transcriptEl = document.getElementById('transcript');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      transcriptEl.textContent = "⏳ Transcribing...";
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/transcribe', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          transcriptEl.textContent = "❌ Error: " + (data.error || "Unknown error");
+        } else {
+          transcriptEl.textContent = data.transcript;
+        }
+      } catch (err) {
+        transcriptEl.textContent = "⚠️ Fetch failed: " + err.message;
+      }
+    });
+
+    function showActionItems() {
+      alert("🔹 This will display Action Items extracted from the transcript.");
+    }
+
+    function showSummary() {
+      alert("🧠 This will generate a concise summary of the meeting.");
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
